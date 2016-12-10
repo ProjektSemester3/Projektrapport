@@ -53,17 +53,12 @@ motorer, sensorer og trykknapper. I dette afsnit vil arkitekturen for systemets 
 \begin{figure}[H]
 \includegraphics[scale=0.8]{Software/Allokeringsdiagram}
 \caption{Software allokeringsdiagram for winePrep}
-\end{figure}
-
-For simplicitetens skyld vil der kun blive taget 
-udgangspunkt i usecasen "åbn vinflaske", når kommunikationen mellem systemets enheder skal illustreres med sekvensdiagrammer på Devkit8000. PSoC Master
-og PSoC Slave vil blive beskrevet under samme afsnit da de deler klasse- og sekvensdiagrammer. Grunden til de ikke er opdelt er for overskueligehedens skyld.
-Da PSoC enhederne deler ansvaret for styring af positionering, giver det mening at de er indkluderet i samme sekvensdiagram. Det vil sige at der er to 
-controllerklasser i klasse- og sekvensdiagrammerne.   
+\end{figure}  
 
 \subsection{Devkit8000 (Linux platform)}
+
 Devkit8000 har ansvaret for interaktion med brugeren via touchskærm. Derfor har systemet brug for en grafisk brugergrænseflade (GUI), hvorpå der er
-implementeret virutuelle knapper, som gør det muligt at oversætte de fysiske tryk til kommandoer, der kan sendes videre i systemet. Der skal også kunne vises
+implementeret virtuelle knapper, som gør det muligt at oversætte de fysiske tryk til kommandoer, der kan sendes videre i systemet. Der skal også kunne vises
 status beskeder til brugeren, så denne er klar over systemets tilstand. Dette implementeres vha. viduer med tekstbeskeder. For at kunne sende brugerinputs 
 videre i systemet skal devkittet forbindes til PSoC master via SPI. Da der køres med Linux på Devkit8000 kræves det derfor at en SPI device driver bliver
 indsat i kernen. Devkit8000 har altså to boundary klasser, som viser grænsefladerne for devkittet. I klassediagramet ses også en protokolklasse for SPI, denne 
@@ -85,10 +80,13 @@ tilbage til GUI, og dermed informeres brugeren.
 \end{figure}
 
 \subsection{PSoC Master og PSoC slave}
+PSoC Master og PSoC Slave vil blive beskrevet under samme afsnit da de deler klasse- og sekvensdiagrammer. 
+Grunden til de ikke er opdelt er for overskueligehedens skyld. Da PSoC enhederne deler ansvaret for styring af positionering, giver det mening at de er 
+indkluderet i samme sekvensdiagram. Det vil sige at der er to controllerklasser i klasse- og sekvensdiagrammerne. 
 
 PSoC Master har to SPI boundary klasser, en til kommunikation med Devkit8000, og en til PSoC slave. Herudover er der boundary klasser til x/y motorer og 
 sensorer på positionering. 
-PSoC slave har SPI boundary klasse til kommunikation med PSoC Master og til z motorer på positionering og motorer på åbningsmekanismen. Begge PSoC enheder har
+PSoC slave har SPI boundary klasse til kommunikation med PSoC Master og til z motorer på positionering, og motorer på åbningsmekanismen. Begge PSoC enheder har
 en SPI protokol til dekodning af SPI kommandoer.
 
 \begin{figure}[H]
@@ -96,8 +94,8 @@ en SPI protokol til dekodning af SPI kommandoer.
 \caption{Klassediagram PSoC Master/Slave}
 \end{figure}
 
-usecasene "åbn vinflaske" og "planlæg åbning" og samlet under det samme sekvensdiagram, da der fra PSoC enhedernes synspunkt sker det samme, nemlig 
-åbning af en flaske. Timing af åbningen foregår på Devkit8000, og har ingen relevans for PSoC enhederne. Der er ikke medtaget alternative scenarier i 
+Usecasene "åbn vinflaske" og "planlæg åbning" og samlet under det samme sekvensdiagram, da der fra PSoC enhedernes synspunkt sker det samme, nemlig 
+åbning af en vinflaske. Timing af åbningen foregår på Devkit8000, og har ingen relevans for PSoC enhederne. Der er ikke medtaget alternative scenarier i 
 sekvensdiagrammet, da disse er trivieller, og blot skaber unødvendig uoverskuelighed. Selve åbningen initieres fra SPI forbindelsen til Devkit8000. Herefter
 sætter PSoC master x/y motorer til vha. sensorerne at finde flaskens x/y plasering. Når disse er fundet gives der besked til PSoC slave om at aktivere z motorene
 og finde den rette afstand til flaskens top. Når denne er fundet påbegyndes åbningen af vinflasken, og derefter dispensering af proppen. Sekvensdiagrammet
